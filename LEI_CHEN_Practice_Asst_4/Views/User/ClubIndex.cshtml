@@ -1,0 +1,38 @@
+<!-- Views/User/ClubIndex.cshtml -->
+@model IEnumerable<Asst4.Models.BridgeClub>
+
+@{
+  ViewData["Title"] = "Bridge Clubs";
+}
+
+<h1>Bridge Clubs</h1>
+
+<p>
+  <a asp-action="NewClub" class="btn btn-primary">Create New Club</a>
+  <a asp-action="Index" class="btn btn-secondary">Back to Users</a>
+</p>
+
+<table class="table">
+  <thead>
+    <tr>
+      <th>@Html.DisplayNameFor(model => model.ClubName)</th>
+      <th>@Html.DisplayNameFor(model => model.CityName)</th>
+      <th>@Html.DisplayNameFor(model => model.MembersBodySize)</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    @foreach (var item in Model)
+    {
+      <tr>
+        <td>@Html.DisplayFor(modelItem => item.ClubName)</td>
+        <td>@Html.DisplayFor(modelItem => item.CityName)</td>
+        <td>@Html.DisplayFor(modelItem => item.MembersBodySize)</td>
+        <td>
+          <a asp-action="EditClub" asp-route-id="@item.ClubID" class="btn btn-sm btn-primary">Edit</a>
+          <a asp-action="ClubDetails" asp-route-id="@item.ClubID" class="btn btn-sm btn-info">Details</a>
+        </td>
+      </tr>
+    }
+  </tbody>
+</table>

@@ -1,0 +1,90 @@
+@model IEnumerable<Asst4.Models.User>
+
+@{
+  ViewData["Title"] = "Users";
+  var sortOrder = ViewBag.CityNameSortParm;
+}
+
+<h1>Users</h1>
+
+<p>
+  <a asp-action="Create" class="btn btn-primary">Create New User</a>
+  <a asp-action="NewClub" class="btn btn-primary">Create New Club</a>
+</p>
+
+<!-- Search Form -->
+<form asp-action="Index" method="get" class="mb-3">
+  <div class="input-group">
+    <input type="text" name="searchString" class="form-control" placeholder="Search by name or city"
+      value="@ViewBag.CurrentFilter" />
+    <button type="submit" class="btn btn-outline-secondary">Search</button>
+  </div>
+</form>
+
+<table class="table">
+  <thead>
+    <tr>
+      <th>@Html.DisplayNameFor(model => model.Name)</th>
+      <th>
+        <a asp-action="Index" asp-route-sortOrder="@ViewBag.CityNameSortParm">
+          @Html.DisplayNameFor(model => model.CityName)
+          @if (sortOrder == "city_desc")
+          {
+            <span>↓</span>
+          }
+          else
+          {
+            <span>↑</span>
+          }
+        </a>
+      </th>
+      <th>@Html.DisplayNameFor(model => model.Province)</th>
+      <th>@Html.DisplayNameFor(model => model.PostalCode)</th>
+      <th>Current Clubs</th>
+      <th>Join Club</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    @foreach (var item in Model)
+    {
+      <tr>
+        <td>@Html.DisplayFor(modelItem => item.Name)</td>
+        <td>@Html.DisplayFor(modelItem => item.CityName)</td>
+        <td>@Html.DisplayFor(modelItem => item.Province)</td>
+        <td>@Html.DisplayFor(modelItem => item.PostalCode)</td>
+        <td>
+          @if (ViewBag.UserClubs?.ContainsKey(item.ID))
+          {
+            @foreach (var club in ViewBag.UserClubs[item.ID])
+            {
+              <div class="mb-1 d-flex justify-content-between">
+                @club.ClubName
+                <form asp-action="LeaveClub" method="post" style="display: inline;">
+                  <input type="hidden" name="userId" value="@item.ID" />
+                  <input type="hidden" name="clubId" value="@club.ClubID" />
+                  <button type="submit" class="btn btn-danger btn-sm">Leave</button>
+                </form>
+              </div>
+            }
+          }
+        </td>
+        <td>
+          <form asp-action="JoinClub" method="post" class="d-flex">
+            <input type="hidden" name="userId" value="@item.ID" />
+            <select name="clubId" class="form-control form-control-sm me-2"
+              asp-items="@(new SelectList(ViewBag.AvailableClubs[item.ID], "ClubID", "ClubName"))">
+              <option value="">Select a Club</option>
+            </select>
+            <button type="submit" class="btn btn-sm btn-primary">Join</button>
+          </form>
+        </td>
+        <td>
+          <a asp-action="Edit" asp-route-id="@item.ID" class="btn btn-sm btn-primary">Edit</a>
+          <a asp-action="Details" asp-route-id="@item.ID" class="btn btn-sm btn-info">Details</a>
+          <a asp-action="Delete" asp-route-id="@item.ID" class="btn btn-sm btn-danger">Delete</a>
+        </td>
+      </tr>
+    }
+  </tbody>
+</table>
